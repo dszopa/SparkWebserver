@@ -1,13 +1,29 @@
 package controller;
 
+import entity.Post;
 import service.PostService;
+import spark.Spark;
+import transformer.JsonTransformer;
 
-/**
- * Created by Daniel Szopa on 12/21/2016.
- */
+import java.util.List;
+
 public class PostController {
 
-    public PostController(final PostService postService) {
+    private static PostController instance = null;
 
+    public static PostController getInstance() {
+        if (instance == null) {
+            instance = new PostController();
+        }
+        return instance;
+    }
+
+    private PostController() {
+        PostService postService = PostService.getInstance();
+
+        Spark.get("/posts", ((request, response) -> {
+            List<Post> posts = postService.getAllPosts();
+            return posts;
+        }), new JsonTransformer());
     }
 }

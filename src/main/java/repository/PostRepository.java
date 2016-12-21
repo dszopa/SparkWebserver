@@ -1,29 +1,31 @@
 package repository;
 
-import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
-import com.mongodb.client.MongoDatabase;
 import entity.Post;
 import org.bson.Document;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Daniel Szopa on 12/21/2016.
- */
-public class PostRepository {
+public final class PostRepository {
+
+    private static PostRepository instance = null;
+
+    public static PostRepository getInstance() {
+        if (instance == null) {
+            instance = new PostRepository();
+        }
+        return instance;
+    }
+
+    private PostRepository() {
+        // Blank but used for singleton purposes
+    }
 
     public List<Post> getAllPosts() {
-
-        // TODO dszopa 12/21/16 - These first three lines should probably be made into a bean
-        MongoClient mongoClient = new MongoClient("localhost", 27017);
-        MongoDatabase testDatabase = mongoClient.getDatabase("testdb");
-        MongoCollection posts = testDatabase.getCollection("post");
-
-
-        MongoCursor<Document> cursor = posts.find().iterator();
+        MongoCollection postCollection = DatabaseConnection.getPostCollection();
+        MongoCursor<Document> cursor = postCollection.find().iterator();
 
         List<Post> postList = new ArrayList<>();
 

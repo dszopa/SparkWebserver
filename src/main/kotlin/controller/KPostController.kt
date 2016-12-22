@@ -1,16 +1,13 @@
 package controller
 
-import spark.Request
-import spark.Response
+import service.KPostService
 import spark.Spark
+import transformer.toJson
 
 class KPostController private constructor() {
     init {
         val postService = KPostService.instance
-        Spark.get("/posts", {request : Request, response : Response -> {
-            val posts = postService.allPosts
-            posts
-        }}, KJsonTransformer())
+        Spark.get("/posts", { req, res -> postService.allPosts }, ::toJson)
     }
 
     private object Holder { val INSTANCE = KPostController() }
